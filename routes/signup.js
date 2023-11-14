@@ -1,19 +1,17 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const { createUser } = require('../controllers/users');
 
-const { editUserData, getMyUser } = require('../controllers/users');
-
-router.get('/me', getMyUser);
-
-router.patch(
-  '/me',
+router.post(
+  '/',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
+      password: Joi.string().required().min(3),
       name: Joi.string().required().min(2).max(30),
     }),
   }),
-  editUserData,
+  createUser,
 );
 
 module.exports = router;
