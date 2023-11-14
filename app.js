@@ -1,38 +1,33 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const helmet = require('helmet');
 const { errors } = require('celebrate');
+const cookies = require('cookie-parser');
 const cors = require('cors');
-const { limiter } = require('./utils/constants');
-const routes = require('./routes/index');
-const errorHandler = require('./middlewares/error-handler');
+const helmet = require('helmet');
+const limiter = require('./middlewares/rateLimit');
+const errorHandler = require('./middlewares/errorHandler');
+const router = require('./routes');
+const {
+  PORT, MONGODB_URI, mongooseOptions, corsOptions,
+} = require('./utils/config');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { PORT, BASE_PATH } = require('./config');
 
 const app = express();
 
-app.use(cors());
-
-mongoose.connect(BASE_PATH, {
-  useNewUrlParser: true,
-});
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors(corsOptions));
 app.use(helmet());
-
+app.use(limiter);
+app.use(cookies());
+app.use(express.json());
 app.use(requestLogger);
 
-app.use(limiter);
+mongoose.connect(MONGODB_URI, mongooseOptions);
 
-app.use('/', routes);
-
+app.use(router);
 app.use(errorLogger);
-
 app.use(errors());
-
 app.use(errorHandler);
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
+});

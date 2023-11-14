@@ -1,10 +1,17 @@
-const rateLimit = require('express-rate-limit');
+const CREATED_STATUS = 201;
+const BAD_REQUEST = 400;
+const UNAUTHORIZED = 401;
+const FORBIDDEN = 403;
+const NOT_FOUND = 404;
+const CONFLICT = 409;
+const INTERNAL_SERVER_ERROR = 500;
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-
-const regUrl = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
-
-module.exports = { regUrl, limiter };
+module.exports = {
+  CREATED_STATUS,
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND,
+  CONFLICT,
+  INTERNAL_SERVER_ERROR,
+};
